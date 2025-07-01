@@ -10,7 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
+      - name: Setup InvisiRisk - Build Application Firewall
+        uses: invisirisk/pse-action@latest
+        with:
+          api_url: "https://app.invisirisk.com"
+          app_token: ${{ secrets.IR_API_KEY }}
+
       - name: Pull down repo
         uses: actions/checkout@v3
         with:
@@ -51,3 +58,21 @@ jobs:
           commit_options: '--signoff'
           commit_user_name: 'Build and Push Automation Script'
           commit_user_email: '<>'
+
+      - name: Cleanup Build Application Firewall
+        if: always()
+        uses: invisirisk/pse-action@latest
+        with:
+          cleanup: "true"
+
+  gather_analytics:
+    runs-on: ubuntu-latest
+    name: Gather Analytics
+    needs: [regenerate]
+    steps:
+      - name: Gather Status
+        uses: invisirisk/pse-action@latest
+        with:
+          api_url: "https://app.invisirisk.com"
+          app_token: ${{ secrets.IR_API_KEY }}
+          send_job_status: "true"
