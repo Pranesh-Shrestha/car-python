@@ -194,6 +194,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Gather Analytics
     needs: [yamllint, analysis-schema, datamodel-schema, sensor-schema, filetype-is-yaml, id-filename-equivalence]
+    if: always()
     steps:
       - name: Gather Status
         uses: invisirisk/pse-action@latest
